@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: content-api
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        cluster-name: local
+        namespace: 656ca37e-3ccc-4e83-a6b0-d4208a283832
+        group: xuechengplus
+      config:
+        group: xuechengplus
+        file-extension: yaml
+        namespace: 656ca37e-3ccc-4e83-a6b0-d4208a283832
+        extension-configs:
+          - data-id: content-service-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+        shared-configs:
+          - data-id: template-config-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            group: xuecheng-plus-common
+            refresh: true
+      server-addr: 192.168.1.103:8848
+

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lomu.content.mapper.TeachplanMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.lomu.content.model.po.Teachplan">
+        <id column="id" property="id"/>
+        <result column="pname" property="pname"/>
+        <result column="parentid" property="parentid"/>
+        <result column="grade" property="grade"/>
+        <result column="media_type" property="mediaType"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="description" property="description"/>
+        <result column="timelength" property="timelength"/>
+        <result column="orderby" property="orderby"/>
+        <result column="course_id" property="courseId"/>
+        <result column="course_pub_id" property="coursePubId"/>
+        <result column="status" property="status"/>
+        <result column="is_preview" property="isPreview"/>
+        <result column="create_date" property="createDate"/>
+        <result column="change_date" property="changeDate"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, pname, parentid, grade, media_type, start_time, end_time, description, timelength, orderby, course_id, course_pub_id, status, is_preview, create_date, change_date
+    </sql>
+    <resultMap id="treeNodeResultMap" type="cn.lomu.content.model.dto.TeachplanDTO">
+        <id column="id" property="id"/>
+        <result column="pname" property="pname"/>
+        <result column="parentid" property="parentid"/>
+        <result column="grade" property="grade"/>
+        <result column="media_type" property="mediaType"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="description" property="description"/>
+        <result column="timelength," property="timelength"/>
+        <result column="orderby," property="orderby"/>
+        <result column="course_id," property="courseId"/>
+        <result column="course_pub_id," property="coursePubId"/>
+        <result column="status," property="status"/>
+        <result column="is_preview," property="isPreview"/>
+        <result column="create_date," property="createDate"/>
+        <result column="change_date," property="changeDate"/>
+        <association property="teachplanMedia" javaType="cn.lomu.content.model.po.TeachplanMedia">
+            <id column="tm_id" property="mediaId"/>
+            <result column="media_fileName" property="mediaFilename"/>
+            <result column="media_id"/>
+        </association>
+    </resultMap>
+
+    <select id="selectTreeNodes" parameterType="long" resultMap="treeNodeResultMap">
+        with recursive t1 as (select t.id,
+                                     t.pname,
+                                     t.parentid,
+                                     t.grade,
+                                     t.media_type,
+                                     t.start_time,
+                                     t.end_time,
+                                     t.description,
+                                     t.timelength,
+                                     t.orderby,
+                                     t.course_id,
+                                     t.course_pub_id,
+                                     t.status,
+                                     t.is_preview,
+                                     t.create_date,
+                                     t.change_date
+                              from teachplan t
+                              where t.course_id = #{courseId}
+
+                              union all
+
+                              select t2.id,
+                                     t2.pname,
+                                     t2.parentid,
+                                     t2.grade,
+                                     t2.media_type,
+                                     t2.start_time,
+                                     t2.end_time,
+                                     t2.description,
+                                     t2.timelength,
+                                     t2.orderby,
+                                     t2.course_id,
+                                     t2.course_pub_id,
+                                     t2.status,
+                                     t2.is_preview,
+                                     t2.create_date,
+                                     t2.change_date
+                              from teachplan t2
+                                       join t1 on t1.id = t2.parentid)
+        select t1.id,
+               t1.pname,
+               t1.parentid,
+               t1.grade,
+               t1.media_type,
+               t1.start_time,
+               t1.end_time,
+               t1.description,
+               t1.timelength,
+               t1.orderby,
+               t1.course_id,
+               t1.course_pub_id,
+               t1.status,
+               t1.is_preview,
+               t1.create_date,
+               t1.change_date,
+               tm.media_fileName,
+               tm.media_id,
+               tm.id
+        from t1
+                 left join teachplan_media tm on t1.id = tm.teachplan_id
+        order by t1.orderby;
+    </select>
+
+</mapper>

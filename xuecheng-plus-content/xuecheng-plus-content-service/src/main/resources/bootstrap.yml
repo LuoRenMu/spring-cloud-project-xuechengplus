@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: content-service
+  cloud:
+    nacos:
+      server-addr: 192.168.1.103:8848
+      config:
+        namespace: 656ca37e-3ccc-4e83-a6b0-d4208a283832
+        group: xuechengplus
+        file-extension: yaml
+        shared-configs:
+          - data-id: feign-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
+      discovery:
+        group: xuechengplus
+        cluster-name: local
+        namespace: 656ca37e-3ccc-4e83-a6b0-d4208a283832
